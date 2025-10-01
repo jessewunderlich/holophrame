@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed - Holophrame</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">DARK MODE</button>
+    
+    <header>
+        <h1>HOLOPHRAME</h1>
+        <p>Minimal. Authentic. Chronological.</p>
+    </header>
+
+    <nav>
+        <a href="feed.html">Feed</a> | 
+        <a href="profile.html">Profile</a> | 
+        <a href="messages.html">Messages</a> | 
+        <a href="search.html">Search</a> | 
+        <a href="#" id="logoutLink">Logout</a>
+    </nav>
+
+    <hr>
+
+    <main>
+        <section>
+            <h2>Your Feed</h2>
+            
+            <div class="post">
+                <h3>Create Post</h3>
+                <form id="createPostForm">
+                    <textarea id="postContent" name="content" 
+                              maxlength="500" 
+                              placeholder="Share your thoughts... (max 500 characters)"
+                              required></textarea>
+                    <p class="text-right"><span id="charCount">0</span>/500</p>
+                    <button type="submit">Post</button>
+                </form>
+            </div>
+
+            <hr>
+
+            <h3>Recent Posts</h3>
+            <p><em>Posts appear in chronological order (newest first)</em></p>
+
+            <div id="feedContainer">
+                <p class="loading">Loading posts...</p>
+            </div>
+
+            <div id="loadMoreContainer" class="text-center hidden">
+                <button id="loadMoreBtn">Load More Posts</button>
+            </div>
+
+        </section>
+    </main>
+
+    <hr>
+
+    <footer>
+        <p>
+            Holophrame &copy; 2025 | 
+            <a href="privacy.html">Privacy</a> | 
+            <a href="terms.html">Terms</a> | 
+            <a href="contact.html">Contact</a>
+        </p>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/websocket.js"></script>
+    <script src="js/feed.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - Holophrame</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">DARK MODE</button>
+    
+    <header>
+        <h1>HOLOPHRAME</h1>
+        <p>Minimal. Authentic. Chronological.</p>
+    </header>
+
+    <nav>
+        <a href="feed.html">Feed</a> | 
+        <a href="profile.html">Profile</a> | 
+        <a href="messages.html">Messages</a> | 
+        <a href="search.html">Search</a> | 
+        <a href="#" id="logoutLink">Logout</a>
+    </nav>
+
+    <hr>
+
+    <main>
+        <section>
+            <h2>Search Users</h2>
+            
+            <form id="searchForm">
+                <label for="searchQuery">Username:</label>
+                <input type="text" id="searchQuery" name="query" 
+                       placeholder="Search for users..." 
+                       required
+                       autocomplete="off">
+                <button type="submit">Search</button>
+            </form>
+
+            <div id="searchResults" class="hidden">
+                <h3>Results</h3>
+                <div id="resultsContainer"></div>
+            </div>
+
+            <hr>
+
+            <h3>Browse All Users</h3>
+            <p><em>Coming soon - ability to browse all users chronologically by join date</em></p>
+
+        </section>
+    </main>
+
+    <hr>
+
+    <footer>
+        <p>
+            Holophrame &copy; 2025 | 
+            <a href="privacy.html">Privacy</a> | 
+            <a href="terms.html">Terms</a> | 
+            <a href="contact.html">Contact</a>
+        </p>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>

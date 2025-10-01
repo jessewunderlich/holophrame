@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Holophrame</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">DARK MODE</button>
+    
+    <header>
+        <h1>HOLOPHRAME</h1>
+        <p>Minimal. Authentic. Chronological.</p>
+    </header>
+
+    <nav>
+        <a href="feed.html">Feed</a> | 
+        <a href="profile.html">Profile</a> | 
+        <a href="messages.html">Messages</a> | 
+        <a href="search.html">Search</a> | 
+        <a href="#" id="logoutLink">Logout</a>
+    </nav>
+
+    <hr>
+
+    <main>
+        <section id="conversationsList">
+            <h2>Direct Messages</h2>
+            
+            <div class="form-group">
+                <button type="button" id="newConversationBtn" class="button">New Conversation</button>
+            </div>
+
+            <hr>
+
+            <div id="conversationsContainer">
+                <!-- Conversations loaded here -->
+            </div>
+        </section>
+
+        <section id="conversationView" class="hidden">
+            <div class="conversation-header-bar">
+                <button type="button" id="backToList">← Back</button>
+                <h2>Conversation with <a href="#" id="conversationUsername"></a></h2>
+            </div>
+
+            <hr>
+
+            <div id="messagesContainer" class="messages-container">
+                <!-- Messages loaded here -->
+            </div>
+
+            <hr>
+
+            <form id="sendMessageForm">
+                <div class="form-group">
+                    <label for="messageContent">Message (max 1000 characters):</label>
+                    <textarea 
+                        id="messageContent" 
+                        name="content" 
+                        maxlength="1000" 
+                        placeholder="Type your message..."
+                        required></textarea>
+                    <span class="char-count"><span id="charCount">0</span>/1000</span>
+                </div>
+                <button type="submit">Send</button>
+            </form>
+        </section>
+    </main>
+
+    <hr>
+
+    <footer>
+        <p>
+            Holophrame &copy; 2025 | 
+            <a href="about.html">About</a>
+        </p>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/websocket.js"></script>
+    <script src="js/messages.js"></script>
+</body>
+</html>

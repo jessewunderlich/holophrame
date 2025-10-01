@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Holophrame</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">DARK MODE</button>
+    
+    <header>
+        <h1>HOLOPHRAME</h1>
+        <p>Minimal. Authentic. Chronological.</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a> | 
+        <a href="login.html">Login</a> | 
+        <a href="register.html">Register</a> | 
+        <a href="about.html">About</a>
+    </nav>
+
+    <hr>
+
+    <main>
+        <section>
+            <h2>Login</h2>
+            
+            <form id="loginForm" action="/api/auth/login" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+                
+                <input type="submit" value="Login">
+            </form>
+
+            <p>
+                Don't have an account? <a href="register.html">Register here</a>.
+            </p>
+
+            <div id="message" class="hidden"></div>
+        </section>
+    </main>
+
+    <hr>
+
+    <footer>
+        <p>
+            Holophrame &copy; 2025 | 
+            <a href="privacy.html">Privacy</a> | 
+            <a href="terms.html">Terms</a> | 
+            <a href="contact.html">Contact</a>
+        </p>
+    </footer>
+
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
