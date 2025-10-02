@@ -42,6 +42,31 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post'
     }],
+    notifications: [{
+        type: {
+            type: String,
+            enum: ['reply', 'mention'],
+            required: true
+        },
+        from: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        post: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Post',
+            required: true
+        },
+        read: {
+            type: Boolean,
+            default: false
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     createdAt: {
         type: Date,
         default: Date.now

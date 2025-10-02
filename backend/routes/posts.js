@@ -30,12 +30,39 @@ router.post('/', auth, postLimiter, [
         await post.save();
         await post.populate('author', 'username bio');
         
-        // If reply, add to parent's replies array
+        // If reply, add to parent's replies array and create notification
         if (req.body.parentPost) {
-            await Post.findByIdAndUpdate(
+            const parentPost = await Post.findByIdAndUpdate(
                 req.body.parentPost,
                 { $push: { replies: post._id } }
-            );
+            ).populate('author');
+            
+            // Create notification for parent post author (if not replying to self)
+            if (parentPost && parentPost.author._id.toString() !== req.user._id.toString()) {
+                await User.findByIdAndUpdate(
+                    parentPost.author._id,
+                    {
+                        $push: {
+                            notifications: {
+                                type: 'reply',
+                                from: req.user._id,
+                                post: post._id,
+                                createdAt: new Date()
+                            }
+                        }
+                    }
+                );
+                
+                // Notify via WebSocket
+                const wsServer = req.app.get('wsServer');
+                if (wsServer) {
+                    wsServer.notifyUser(parentPost.author._id.toString(), {
+                        type: 'reply',
+                        from: req.user.username,
+                        postId: post._id
+                    });
+                }
+            }
         }
         
         // Broadcast new post via WebSocket
