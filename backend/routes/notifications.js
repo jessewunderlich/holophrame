@@ -20,25 +20,33 @@ router.get('/', auth, async (req, res) => {
             .populate({
                 path: 'notifications.post',
                 select: 'content createdAt'
-            })
-            .lean();
+            });
         
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
         
-        // Sort notifications by date (newest first) and paginate
-        const sortedNotifications = user.notifications
+        // Filter out notifications with deleted references and sort by date (newest first)
+        const validNotifications = user.notifications
+            .filter(n => n.from && n.post) // Remove notifications with deleted users/posts
+            .map(n => ({
+                _id: n._id,
+                type: n.type,
+                from: n.from,
+                post: n.post,
+                read: n.read,
+                createdAt: n.createdAt
+            }))
             .sort((a, b) => b.createdAt - a.createdAt)
             .slice(skip, skip + limit);
         
-        const total = user.notifications.length;
+        const total = user.notifications.filter(n => n.from && n.post).length;
         
         res.json({
-            notifications: sortedNotifications,
+            notifications: validNotifications,
             page,
             totalPages: Math.ceil(total / limit),
-            hasMore: skip + sortedNotifications.length < total
+            hasMore: skip + validNotifications.length < total
         });
         
     } catch (error) {
