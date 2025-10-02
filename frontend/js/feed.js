@@ -417,13 +417,102 @@ function attachBookmarkHandlers() {
 
 // Initialize feed
 document.addEventListener('DOMContentLoaded', () => {
-    loadFeed();
+    // Check if there's a specific post to load (from notification)
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('post');
+    
+    if (postId) {
+        // Load specific post
+        loadSpecificPost(postId);
+    } else {
+        // Load regular feed
+        loadFeed();
+    }
     
     // Initialize WebSocket for real-time updates
     if (isAuthenticated()) {
         initWebSocket();
     }
 });
+
+// Load a specific post (for notifications)
+async function loadSpecificPost(postId) {
+    const feedContainer = document.getElementById('feedContainer');
+    const loadMoreContainer = document.getElementById('loadMoreContainer');
+    
+    try {
+        const data = await apiRequest(`/posts/${postId}`);
+        
+        if (!data.post) {
+            feedContainer.innerHTML = '<p>Post not found.</p>';
+            return;
+        }
+        
+        // Render the specific post
+        const postHtml = createPostHtml(data.post);
+        feedContainer.innerHTML = postHtml;
+        loadMoreContainer.classList.add('hidden');
+        
+        // Highlight the post
+        const postElement = feedContainer.querySelector(`[data-post-id="${postId}"]`);
+        if (postElement) {
+            postElement.style.backgroundColor = 'var(--bg-secondary)';
+            postElement.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Attach handlers
+        attachDeleteHandlers();
+        attachReplyHandlers();
+        attachEditHandlers();
+        attachBookmarkHandlers();
+        
+    } catch (error) {
+        console.error('Error loading post:', error);
+        feedContainer.innerHTML = '<p>Failed to load post.</p>';
+    }
+}
+
+// Create HTML for a single post
+function createPostHtml(post) {
+    const currentUser = getCurrentUser();
+    
+    const repliesHtml = post.replies && post.replies.length > 0
+        ? post.replies.map(reply => `
+            <div class="post reply" style="margin-left: 30px; border-left: 3px solid var(--border-secondary); padding-left: 15px;" data-post-id="${reply._id}">
+                <div class="post-header">
+                    <strong><a href="profile.html?user=${escapeHtml(reply.author.username)}">${escapeHtml(reply.author.username)}</a></strong>
+                    <span class="post-meta"> - ${formatDate(reply.createdAt)}${reply.editedAt ? ' <span class="edited-indicator">(edited)</span>' : ''}</span>
+                </div>
+                <div class="post-content">
+                    ${escapeHtml(reply.content)}
+                </div>
+                ${reply.author._id === currentUser?.id ? `
+                <div class="post-actions">
+                    ${canEdit(reply.createdAt) ? `<a href="#" class="edit-link" data-post-id="${reply._id}">Edit</a> | ` : ''}
+                    <a href="#" class="delete-link" data-post-id="${reply._id}">Delete</a>
+                </div>` : ''}
+            </div>
+        `).join('')
+        : '';
+    
+    return `
+        <div class="post" data-post-id="${post._id}">
+            <div class="post-header">
+                <strong><a href="profile.html?user=${escapeHtml(post.author.username)}">${escapeHtml(post.author.username)}</a></strong>
+                <span class="post-meta"> - ${formatDate(post.createdAt)}${post.editedAt ? ' <span class="edited-indicator">(edited)</span>' : ''}</span>
+            </div>
+            <div class="post-content">
+                ${escapeHtml(post.content)}
+            </div>
+            <div class="post-actions">
+                <a href="#" class="reply-link" data-post-id="${post._id}">Reply</a>
+                ${post.author._id === currentUser?.id ? ` | ${canEdit(post.createdAt) ? `<a href="#" class="edit-link" data-post-id="${post._id}">Edit</a> | ` : ''}<a href="#" class="delete-link" data-post-id="${post._id}">Delete</a>` : ''}
+                 | <a href="#" class="bookmark-link" data-post-id="${post._id}">★ Bookmark</a>
+            </div>
+            ${repliesHtml}
+        </div>
+    `;
+}
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', () => {

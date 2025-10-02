@@ -120,11 +120,37 @@ async function loadRecentPosts() {
     }
 }
 
+// Update notification badge
+async function updateNotificationBadge() {
+    const badge = document.getElementById('unreadBadge');
+    if (!badge || !isAuthenticated()) return;
+    
+    try {
+        const data = await apiRequest('/notifications/unread-count');
+        
+        if (data.count > 0) {
+            badge.textContent = data.count;
+            badge.style.display = 'inline';
+        } else {
+            badge.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error updating notification badge:', error);
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     // Load recent posts if on homepage
     if (document.querySelector('.post-preview')) {
         loadRecentPosts();
+    }
+    
+    // Update notification badge on authenticated pages
+    if (isAuthenticated() && document.getElementById('unreadBadge')) {
+        updateNotificationBadge();
+        // Refresh badge every 30 seconds
+        setInterval(updateNotificationBadge, 30000);
     }
     
     // Redirect authenticated users away from public pages
