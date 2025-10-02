@@ -90,6 +90,11 @@ async function loadConversationMessages(userId) {
         // Scroll to bottom
         scrollToBottom();
         
+        // Update message badge (messages marked as read on backend)
+        if (typeof updateMessageBadge === 'function') {
+            setTimeout(updateMessageBadge, 500);
+        }
+        
     } catch (error) {
         messagesContainer.innerHTML = '<p class="error">Failed to load messages.</p>';
     }

@@ -139,6 +139,33 @@ async function updateNotificationBadge() {
     }
 }
 
+// Update message badge
+async function updateMessageBadge() {
+    const badge = document.getElementById('messagesBadge');
+    if (!badge || !isAuthenticated()) return;
+    
+    try {
+        const data = await apiRequest('/messages/unread-count');
+        
+        if (data.count > 0) {
+            badge.textContent = data.count;
+            badge.style.display = 'inline';
+        } else {
+            badge.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error updating message badge:', error);
+    }
+}
+
+// Update all badges
+async function updateAllBadges() {
+    await Promise.all([
+        updateNotificationBadge(),
+        updateMessageBadge()
+    ]);
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     // Load recent posts if on homepage
@@ -146,11 +173,11 @@ document.addEventListener('DOMContentLoaded', () => {
         loadRecentPosts();
     }
     
-    // Update notification badge on authenticated pages
-    if (isAuthenticated() && document.getElementById('unreadBadge')) {
-        updateNotificationBadge();
-        // Refresh badge every 30 seconds
-        setInterval(updateNotificationBadge, 30000);
+    // Update badges on authenticated pages
+    if (isAuthenticated()) {
+        updateAllBadges();
+        // Refresh badges every 30 seconds
+        setInterval(updateAllBadges, 30000);
     }
     
     // Redirect authenticated users away from public pages

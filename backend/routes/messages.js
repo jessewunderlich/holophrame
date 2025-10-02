@@ -208,4 +208,20 @@ router.put('/mark-read/:userId', auth, async (req, res) => {
     }
 });
 
+// Get unread message count
+router.get('/unread-count', auth, async (req, res) => {
+    try {
+        const count = await Message.countDocuments({
+            recipient: req.user.id,
+            read: false
+        });
+        
+        res.json({ count });
+        
+    } catch (error) {
+        logger.error(`Get unread count error: ${error.message}`);
+        res.status(500).json({ error: 'Failed to get unread count' });
+    }
+});
+
 module.exports = router;
