@@ -69,12 +69,14 @@ router.get('/feed', auth, async (req, res) => {
         const limit = parseInt(req.query.limit) || 20;
         const skip = (page - 1) * limit;
         
-        // Get list of muted users to filter out
+        // Get list of blocked and muted users to filter out
+        const blockedUserIds = req.user.blockedUsers || [];
         const mutedUserIds = req.user.mutedUsers || [];
+        const excludedUserIds = [...blockedUserIds, ...mutedUserIds];
         
         const posts = await Post.find({ 
             parentPost: null,
-            author: { $nin: mutedUserIds } // Exclude muted users' posts
+            author: { $nin: excludedUserIds } // Exclude blocked and muted users' posts
         })
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -89,7 +91,7 @@ router.get('/feed', auth, async (req, res) => {
         
         const total = await Post.countDocuments({ 
             parentPost: null,
-            author: { $nin: mutedUserIds }
+            author: { $nin: excludedUserIds }
         });
         
         res.json({
