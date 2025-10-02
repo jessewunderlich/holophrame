@@ -120,9 +120,19 @@ router.post('/send', auth, [
         }
         
         // Check if recipient exists
-        const recipient = await User.findById(recipientId).select('username');
+        const recipient = await User.findById(recipientId).select('username blockedUsers');
         if (!recipient) {
             return res.status(404).json({ error: 'Recipient not found' });
+        }
+        
+        // Check if you are blocked by recipient
+        if (recipient.blockedUsers && recipient.blockedUsers.includes(req.user.id)) {
+            return res.status(403).json({ error: 'Cannot send message to this user' });
+        }
+        
+        // Check if you have blocked the recipient
+        if (req.user.blockedUsers && req.user.blockedUsers.includes(recipientId)) {
+            return res.status(403).json({ error: 'You have blocked this user' });
         }
         
         // Create message

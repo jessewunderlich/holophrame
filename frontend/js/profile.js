@@ -31,7 +31,12 @@ async function loadProfile() {
                     <p class="timestamp">Joined ${formatDate(user.createdAt)}</p>
                     <p class="timestamp">Last active ${formatDate(user.lastActive)}</p>
                 </div>
-                ${isOwnProfile ? '<button id="editProfileBtn">Edit Profile</button>' : ''}
+                <div class="profile-actions">
+                    ${isOwnProfile ? '<button id="editProfileBtn">Edit Profile</button>' : `
+                        <button id="blockBtn" data-user-id="${user._id}">Block User</button>
+                        <button id="muteBtn" data-user-id="${user._id}">Mute User</button>
+                    `}
+                </div>
             </div>
         `;
         
@@ -41,6 +46,10 @@ async function loadProfile() {
         // Attach edit handler if own profile
         if (isOwnProfile) {
             document.getElementById('editProfileBtn')?.addEventListener('click', showEditForm);
+        } else {
+            // Attach block/mute handlers
+            document.getElementById('blockBtn')?.addEventListener('click', handleBlock);
+            document.getElementById('muteBtn')?.addEventListener('click', handleMute);
         }
         
     } catch (error) {
@@ -159,6 +168,50 @@ function attachDeleteHandlers() {
             }
         });
     });
+}
+
+// Handle block user
+async function handleBlock(e) {
+    const userId = e.target.getAttribute('data-user-id');
+    const username = requestedUsername;
+    
+    if (!confirm(`Block ${username}? They won't be able to see your posts or message you.`)) {
+        return;
+    }
+    
+    try {
+        await apiRequest(`/users/block/${userId}`, {
+            method: 'POST'
+        });
+        
+        alert(`${username} has been blocked.`);
+        window.location.href = 'feed.html';
+        
+    } catch (error) {
+        alert('Failed to block user: ' + error.message);
+    }
+}
+
+// Handle mute user
+async function handleMute(e) {
+    const userId = e.target.getAttribute('data-user-id');
+    const username = requestedUsername;
+    
+    if (!confirm(`Mute ${username}? You won't see their posts in your feed.`)) {
+        return;
+    }
+    
+    try {
+        await apiRequest(`/users/mute/${userId}`, {
+            method: 'POST'
+        });
+        
+        alert(`${username} has been muted.`);
+        window.location.href = 'feed.html';
+        
+    } catch (error) {
+        alert('Failed to mute user: ' + error.message);
+    }
 }
 
 // Handle logout

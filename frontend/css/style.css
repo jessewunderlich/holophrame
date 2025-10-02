@@ -584,3 +584,45 @@ footer p {
     color: var(--text-secondary);
     font-size: 0.9em;
 }
+
+/* Settings Page Styles */
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid var(--border-primary);
+    margin-bottom: 10px;
+}
+
+.user-item button {
+    padding: 8px 16px;
+    border: 2px solid var(--border-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.user-item button:hover {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+}
+
+.profile-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.profile-actions button {
+    padding: 10px 20px;
+    border: 2px solid var(--border-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.profile-actions button:hover {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+}
