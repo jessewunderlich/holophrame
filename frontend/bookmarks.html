@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search - Holophrame</title>
+    <title>Bookmarks - Holophrame</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -28,27 +28,19 @@
 
     <main>
         <section>
-            <h2>Search Users</h2>
-            
-            <form id="searchForm">
-                <label for="searchQuery">Username:</label>
-                <input type="text" id="searchQuery" name="query" 
-                       placeholder="Search for users..." 
-                       required
-                       autocomplete="off">
-                <button type="submit">Search</button>
-            </form>
+            <h2>BOOKMARKS</h2>
+            <p>Posts you've saved to read later.</p>
 
-            <div id="searchResults" class="hidden">
-                <h3>Results</h3>
-                <div id="resultsContainer"></div>
+            <div id="bookmarksContainer"></div>
+
+            <div id="loadMoreContainer" style="margin-top: 20px; display: none;">
+                <button id="loadMoreBtn">LOAD MORE</button>
             </div>
 
-            <hr>
-
-            <h3>Browse All Users</h3>
-            <p><em>Coming soon - ability to browse all users chronologically by join date</em></p>
-
+            <div id="emptyState" style="display: none; margin-top: 30px;">
+                <p>No bookmarked posts yet.</p>
+                <p>Click the bookmark button (★) on any post to save it here.</p>
+            </div>
         </section>
     </main>
 
@@ -56,15 +48,13 @@
 
     <footer>
         <p>
-            Holophrame &copy; 2025 | 
-            <a href="privacy.html">Privacy</a> | 
-            <a href="terms.html">Terms</a> | 
-            <a href="contact.html">Contact</a>
+            <a href="about.html">About</a> | 
+            <a href="https://github.com/jessewunderlich/holophrame" target="_blank">GitHub</a>
         </p>
     </footer>
 
     <script src="js/theme.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/search.js"></script>
+    <script src="js/bookmarks.js"></script>
 </body>
 </html>

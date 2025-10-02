@@ -87,6 +87,7 @@ async function loadFeed(append = false) {
                         <div class="post-actions">
                             <a href="#" class="reply-link" data-post-id="${post._id}">Reply</a>
                             ${post.author._id === getCurrentUser()?.id ? ` | ${canEdit(post.createdAt) ? `<a href="#" class="edit-link" data-post-id="${post._id}">Edit</a> | ` : ''}<a href="#" class="delete-link" data-post-id="${post._id}">Delete</a>` : ''}
+                             | <a href="#" class="bookmark-link" data-post-id="${post._id}">★ Bookmark</a>
                         </div>
                         ${repliesHtml}
                     </div>
@@ -112,6 +113,8 @@ async function loadFeed(append = false) {
             attachReplyHandlers();
             // Attach edit handlers
             attachEditHandlers();
+            // Attach bookmark handlers
+            attachBookmarkHandlers();
             
         } else if (!append) {
             feedContainer.innerHTML = '<p><em>No posts yet. Be the first to share something!</em></p>';
@@ -377,6 +380,40 @@ document.getElementById('logoutLink')?.addEventListener('click', (e) => {
         window.location.href = 'index.html';
     }
 });
+
+// Handle bookmark actions
+function attachBookmarkHandlers() {
+    document.querySelectorAll('.bookmark-link').forEach(link => {
+        link.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const postId = e.target.getAttribute('data-post-id');
+            
+            try {
+                await apiRequest(`/posts/${postId}/bookmark`, {
+                    method: 'POST'
+                });
+                
+                // Update button text to show it's bookmarked
+                e.target.textContent = '★ Bookmarked';
+                e.target.style.color = 'var(--text-secondary)';
+                
+                // Show success message briefly
+                const originalText = e.target.textContent;
+                setTimeout(() => {
+                    e.target.textContent = originalText;
+                }, 1500);
+                
+            } catch (error) {
+                if (error.message.includes('already bookmarked')) {
+                    alert('This post is already in your bookmarks!');
+                } else {
+                    alert('Failed to bookmark post: ' + error.message);
+                }
+            }
+        });
+    });
+}
 
 // Initialize feed
 document.addEventListener('DOMContentLoaded', () => {

@@ -4,6 +4,7 @@ const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 const Post = require('../models/Post');
+const User = require('../models/User');
 const logger = require('../config/logger');
 const { postLimiter } = require('../config/rate-limit');
 
@@ -237,6 +238,95 @@ router.delete('/:id', auth, async (req, res) => {
     } catch (error) {
         logger.error(`Delete post error: ${error.message}`);
         res.status(500).json({ error: 'Failed to delete post' });
+    }
+});
+
+// Bookmark a post
+router.post('/:postId/bookmark', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.postId);
+        
+        if (!post) {
+            return res.status(404).json({ error: 'Post not found' });
+        }
+        
+        const user = await User.findById(req.user._id);
+        
+        // Check if already bookmarked
+        if (user.bookmarkedPosts.includes(post._id)) {
+            return res.status(400).json({ error: 'Post already bookmarked' });
+        }
+        
+        user.bookmarkedPosts.push(post._id);
+        await user.save();
+        
+        logger.info(`Post bookmarked: ${post._id} by user ${req.user._id}`);
+        
+        res.json({ message: 'Post bookmarked successfully' });
+        
+    } catch (error) {
+        logger.error(`Bookmark post error: ${error.message}`);
+        res.status(500).json({ error: 'Failed to bookmark post' });
+    }
+});
+
+// Remove bookmark from a post
+router.delete('/:postId/bookmark', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        
+        // Remove post from bookmarks
+        user.bookmarkedPosts = user.bookmarkedPosts.filter(
+            postId => postId.toString() !== req.params.postId
+        );
+        await user.save();
+        
+        logger.info(`Bookmark removed: ${req.params.postId} by user ${req.user._id}`);
+        
+        res.json({ message: 'Bookmark removed successfully' });
+        
+    } catch (error) {
+        logger.error(`Remove bookmark error: ${error.message}`);
+        res.status(500).json({ error: 'Failed to remove bookmark' });
+    }
+});
+
+// Get user's bookmarked posts
+router.get('/bookmarks', auth, async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+        
+        const user = await User.findById(req.user._id).populate({
+            path: 'bookmarkedPosts',
+            options: { 
+                sort: { createdAt: -1 },
+                skip: skip,
+                limit: limit
+            },
+            populate: [
+                { path: 'author', select: 'username bio' },
+                {
+                    path: 'replies',
+                    populate: { path: 'author', select: 'username bio' },
+                    options: { sort: { createdAt: 1 } }
+                }
+            ]
+        });
+        
+        const total = user.bookmarkedPosts.length;
+        
+        res.json({
+            posts: user.bookmarkedPosts,
+            page,
+            totalPages: Math.ceil(total / limit),
+            hasMore: skip + user.bookmarkedPosts.length < total
+        });
+        
+    } catch (error) {
+        logger.error(`Get bookmarks error: ${error.message}`);
+        res.status(500).json({ error: 'Failed to load bookmarks' });
     }
 });
 

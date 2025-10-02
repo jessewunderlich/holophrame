@@ -626,3 +626,25 @@ footer p {
     background-color: var(--text-primary);
     color: var(--bg-primary);
 }
+
+/* Bookmark styles */
+.bookmark-link {
+    cursor: pointer;
+}
+
+.bookmark-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--border-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.bookmark-btn:hover {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+}
+
+.bookmark-btn.bookmarked {
+    color: var(--link-color);
+}
