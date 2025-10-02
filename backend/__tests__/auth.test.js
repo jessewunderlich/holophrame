@@ -24,9 +24,9 @@ describe('Auth Routes', () => {
                 .send(userData)
                 .expect(201);
             
-            expect(response.body.token).toBeDefined();
-            expect(response.body.user.username).toBe(userData.username);
-            expect(response.body.user.password).toBeUndefined();
+            expect(response.body.message).toBe('Registration successful. Please login.');
+            expect(response.body.username).toBe(userData.username);
+            expect(response.body.token).toBeUndefined(); // No token on registration
         });
         
         test('should reject duplicate username', async () => {
