@@ -46,6 +46,11 @@ async function loadConversations() {
             conversationsContainer.innerHTML = '<p><em>No messages yet. Search for a user to start a conversation!</em></p>';
         }
         
+        // Update message badge after loading conversations
+        if (typeof updateMessageBadge === 'function') {
+            updateMessageBadge();
+        }
+        
     } catch (error) {
         conversationsContainer.innerHTML = '<p class="error">Failed to load conversations.</p>';
     }
@@ -90,9 +95,10 @@ async function loadConversationMessages(userId) {
         // Scroll to bottom
         scrollToBottom();
         
-        // Update message badge (messages marked as read on backend)
+        // Update message badge immediately (messages marked as read on backend)
+        // Use small delay to ensure backend has processed the read status
         if (typeof updateMessageBadge === 'function') {
-            setTimeout(updateMessageBadge, 500);
+            setTimeout(updateMessageBadge, 200);
         }
         
     } catch (error) {
@@ -292,6 +298,11 @@ function handleNewMessage(message) {
     } else {
         // Show notification or update conversations list
         loadConversations();
+        
+        // Update message badge immediately when new message arrives
+        if (typeof updateMessageBadge === 'function') {
+            setTimeout(updateMessageBadge, 200);
+        }
     }
 }
 
