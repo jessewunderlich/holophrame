@@ -129,7 +129,8 @@ function handleNewPost(post) {
             </div>
             <div class="post-actions">
                 <a href="#" class="reply-link" data-post-id="${post._id}">Reply</a>
-                ${post.author._id === currentUser.id ? ` | <a href="#" class="delete-link" data-post-id="${post._id}">Delete</a>` : ''}
+                 | <a href="#" class="bookmark-link" data-post-id="${post._id}">★ Bookmark</a>
+                ${post.author._id === currentUser.id ? ` | <a href="#" class="edit-link" data-post-id="${post._id}">Edit</a> | <a href="#" class="delete-link" data-post-id="${post._id}">Delete</a>` : ''}
             </div>
         </div>
     `;
@@ -143,6 +144,12 @@ function handleNewPost(post) {
     }
     if (typeof attachReplyHandlers === 'function') {
         attachReplyHandlers();
+    }
+    if (typeof attachBookmarkHandlers === 'function') {
+        attachBookmarkHandlers();
+    }
+    if (typeof attachEditHandlers === 'function') {
+        attachEditHandlers();
     }
 }
 
@@ -181,9 +188,12 @@ function handlePostEdited(postData) {
 }
 
 function handleNotification(notification) {
-    // Simple notification display
-    console.log('Notification:', notification);
-    // Can be enhanced later with a notification UI
+    // Update notification badge immediately
+    if (typeof updateNotificationBadge === 'function') {
+        updateNotificationBadge();
+    }
+    
+    console.log('New notification:', notification);
 }
 
 function closeWebSocket() {
