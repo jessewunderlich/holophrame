@@ -298,30 +298,34 @@ router.get('/bookmarks', auth, async (req, res) => {
         const limit = parseInt(req.query.limit) || 20;
         const skip = (page - 1) * limit;
         
-        const user = await User.findById(req.user._id).populate({
-            path: 'bookmarkedPosts',
-            options: { 
-                sort: { createdAt: -1 },
-                skip: skip,
-                limit: limit
-            },
-            populate: [
-                { path: 'author', select: 'username bio' },
-                {
-                    path: 'replies',
-                    populate: { path: 'author', select: 'username bio' },
-                    options: { sort: { createdAt: 1 } }
-                }
-            ]
-        });
+        const user = await User.findById(req.user._id);
         
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        // Get total count
         const total = user.bookmarkedPosts.length;
         
+        // Get paginated bookmarked post IDs
+        const paginatedPostIds = user.bookmarkedPosts.slice(skip, skip + limit);
+        
+        // Fetch the actual posts with populated data
+        const posts = await Post.find({ _id: { $in: paginatedPostIds } })
+            .sort({ createdAt: -1 })
+            .populate('author', 'username bio')
+            .populate({
+                path: 'replies',
+                populate: { path: 'author', select: 'username bio' },
+                options: { sort: { createdAt: 1 } }
+            })
+            .lean();
+        
         res.json({
-            posts: user.bookmarkedPosts,
+            posts,
             page,
             totalPages: Math.ceil(total / limit),
-            hasMore: skip + user.bookmarkedPosts.length < total
+            hasMore: skip + posts.length < total
         });
         
     } catch (error) {
