@@ -11,7 +11,9 @@ function initWebSocket() {
     }
     
     isConnecting = true;
-    const wsUrl = 'ws://localhost:3000';
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsHost = window.location.hostname === 'localhost' ? 'localhost:3000' : window.location.host;
+    const wsUrl = `${wsProtocol}//${wsHost}`;
     
     try {
         ws = new WebSocket(wsUrl);

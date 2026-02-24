@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 const User = require('../models/User');
 const Post = require('../models/Post');
 const logger = require('../config/logger');
+const { apiLimiter } = require('../config/rate-limit');
 
 // Get user profile
 router.get('/:username', async (req, res) => {
@@ -33,7 +34,7 @@ router.get('/:username', async (req, res) => {
 });
 
 // Search users
-router.get('/search/:query', async (req, res) => {
+router.get('/search/:query', auth, apiLimiter, async (req, res) => {
     try {
         const query = req.params.query;
         const users = await User.find({

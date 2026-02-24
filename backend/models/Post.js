@@ -36,5 +36,6 @@ const postSchema = new mongoose.Schema({
 // Index for chronological queries
 postSchema.index({ createdAt: -1 });
 postSchema.index({ author: 1, createdAt: -1 });
+postSchema.index({ parentPost: 1 });
 
 module.exports = mongoose.model('Post', postSchema);

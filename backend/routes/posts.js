@@ -94,7 +94,7 @@ router.post('/', auth, postLimiter, [
 router.get('/feed', auth, async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
+        const limit = Math.min(parseInt(req.query.limit) || 20, 50);
         const skip = (page - 1) * limit;
         
         // Get list of blocked and muted users to filter out
@@ -138,7 +138,7 @@ router.get('/feed', auth, async (req, res) => {
 // Get public posts (for unauthenticated users)
 router.get('/public', async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit) || 5;
+        const limit = Math.min(parseInt(req.query.limit) || 5, 20);
         
         const posts = await Post.find({ parentPost: null })
             .sort({ createdAt: -1 })

@@ -52,7 +52,6 @@ class WebSocketServer {
                 case 'ping':
                     ws.send(JSON.stringify({ type: 'pong' }));
                     break;
-                    break;
                 default:
                     ws.send(JSON.stringify({ 
                         type: 'error', 
